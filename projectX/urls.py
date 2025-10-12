@@ -21,7 +21,7 @@ from django.http import HttpResponse;
 
 
 urlpatterns = [
-    path('',include("apps.dashboard.urls")),
+    path('',include("dashboard.urls")),
     # path('accounts/',include("apps.accounts.urls")),
     # path('exercises/',include("apps.exercise.urls")),
     # path('nutrition/',include("apps.nutrition.urls")),
