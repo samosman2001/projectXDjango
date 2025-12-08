@@ -112,15 +112,15 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
             <a href="#" class="btn doublehelix" ><img src="{% static 'icons/doublehelix.svg' %}" alt="Doublehelix" ></a>
             <!-- "/"in <a href ="" referes to home page -->
             <a href="/" class="btn main"><img src="{% static 'icons/main.svg' %}" alt="Main"></a>
-            <a href="{% url 'dashboard:nutrition' %}" class="btn nutrition"><img src="{% static 'icons/Nutrition.svg' %}" alt="nutrition" ></a>
-            <a href="{% url 'dashboard:exercise' %}" class="btn exercise"><img src="{% static 'icons/dumbell.svg' %}" alt="Exercise" ></a>
+            <a href="{% url 'nutrition:nutrition' %}" class="btn nutrition"><img src="{% static 'icons/Nutrition.svg' %}" alt="nutrition" ></a>
+            <a href="{% url 'exercise:exercise' %}" class="btn exercise"><img src="{% static 'icons/dumbell.svg' %}" alt="Exercise" ></a>
             <a href="" class="btn settings"><img src="{% static 'icons/Settings.svg' %}" alt="Settings" ></a>
             <a href="" class="btn calendar"><img src="{% static 'icons/Calendar.svg' %}" alt="Calendar" ></a>
             <a href="" class="btn progressChart"><img src="{% static 'icons/Statistics.svg' %}" alt="progressChart" ></a>
             </div>
         <div class="lowerPart">
             <a href="" class="btn"><img src="{% static 'icons/Help.svg' %}" alt="Help" ></a>
-            <a href="{% url 'dashboard:logout' %}" class="btn"><img src="{% static 'icons/Exit.svg' %}" alt="Exit" ></a>
+            <a href="{% url 'accounts:logout' %}" class="btn"><img src="{% static 'icons/Exit.svg' %}" alt="Exit" ></a>
             <a href=""></a> 
         </div>
         </nav>
@@ -371,7 +371,7 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
 
 
 <div class="illustration">
-     <img src="" alt="bodyIllustration">
+     <img src="{% static 'icons/Male-Clothes.svg' %}" alt="bodyIllustration">
 </div>
 
 </div>
@@ -380,7 +380,7 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
 <div class="cards anthopoageResults">
     <div class="anthopoageCard">
         <div class="description">
-          <span><?= $anthropoAge ?? '--' ?></span>
+          <span>--</span>
         </div>
         <div class="image">
             <img src=".svg" alt="image">
@@ -388,7 +388,9 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
     </div>
 
     <div class="anthopoageCard">
+
         <div class="description">
+
             <span>-2.3</span>
             <span>AnthropoageAcceleration</span>
         </div>
@@ -447,6 +449,8 @@ function showToast(message) {
 
 showToast("Successfully logged in");
 console.log("{{show_toast}}");
+// {% elif show_toast == "Already Logged in" %}
+// showToast("{{showToast}}")
 {% endif %}
 // <?php endif?>
 // window.onpageshow = function(e) {

@@ -17,13 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.http import HttpResponse;
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 
 
 urlpatterns = [
-    path('',include("apps.dashboard.urls")),
+    path('',include("dashboard.urls")),
+    path('',include("accounts.urls")),
+    path('',include("nutrition.urls")),
+    path('',include("exercise.urls")),
     # path('accounts/',include("apps.accounts.urls")),
     # path('exercises/',include("apps.exercise.urls")),
     # path('nutrition/',include("apps.nutrition.urls")),
     # path('api/',include('apps.api.urls'))
-]
+    
+]+ debug_toolbar_urls()
