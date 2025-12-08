@@ -45,6 +45,7 @@ def register(request,show_register = True):
 def login_view(request):
     show_logout_toast =request.session.pop("show_logout_toast",True)
     if request.user.is_authenticated:
+        request.session["show_login_toast"] = "Already Logged In"
         return redirect("dashboard:home")
     if request.method == "POST":
         username = request.POST.get("login_email","").strip()
@@ -57,7 +58,7 @@ def login_view(request):
 
         if user is not None and user.is_active:
             login(request, user)
-            request.session["show_login_toast"] = True
+            request.session["show_login_toast"] = "Successfully Logged In"
             remember_me = request.POST.get("remember")
             if remember_me:
             	request.session.set_expiry(64800)

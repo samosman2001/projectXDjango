@@ -9,7 +9,7 @@ from django.shortcuts import render
    
 @login_required(login_url = "accounts:login")
 def home(request):
-	show_login_toast = request.session.pop("show_login_toast",False)
+	show_login_toast = request.session.pop("show_login_toast","")
 	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
 
 # Create your views here.

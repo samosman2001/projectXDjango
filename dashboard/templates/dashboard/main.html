@@ -445,10 +445,12 @@ function showToast(message) {
 // ?>
 // showToast("<?= htmlspecialchars($message)?>");
 
-{% if show_toast %}
+{% if show_toast == "Successfully Logged In" %}
 
-showToast("Successfully logged in");
-console.log("{{show_toast}}");
+showToast("{{show_toast}}");
+{% elif show_toast == "Already Logged In"%}
+showToast("{{show_toast}}");
+
 // {% elif show_toast == "Already Logged in" %}
 // showToast("{{showToast}}")
 {% endif %}
