@@ -41,12 +41,18 @@ def register(request,show_register = True):
 
 
 # any time you call /login page dashboard/login.html page is called automatically 
+
 @never_cache
 def login_view(request):
     show_logout_toast =request.session.pop("show_logout_toast",True)
+    if "next" in request.GET:
+       show_logout_toast = request.session.pop("show_logout_toast","Access Denied")
+
+   
     if request.user.is_authenticated:
         request.session["show_login_toast"] = "Already Logged In"
         return redirect("dashboard:home")
+   
     if request.method == "POST":
         username = request.POST.get("login_email","").strip()
         password = request.POST.get("passwordInput", "")
