@@ -15,7 +15,7 @@ def home(request):
 	request_weight =request.POST.get("weight_kg")
 	request_age = request.POST.get("age")
 	request_waist = request.POST.getlist("gender",None)[0]
-	print(request_waist)
+    request_gender = request.POST.get("gender")
 
 	height_cm = int(request_height) if request_height not in (None, "", "None") and str(request_height).strip().isdigit() else None
 	 
@@ -27,14 +27,14 @@ def home(request):
 	waist = int(request_waist) if request_waist not in (None,"","None") and str(request_waist).strip().isdigit() else None
 	# waist = int(request.POST.get("waist")) if request.POST.get("waist") is not "" else None
 	if(height_cm  is not None and weight_kg  is not None and age is not None  and waist is not None):
-		calculateAnthropoAge(request,height_cm,weight_kg,age,waist)
+		calculateAnthropoAge(request,height_cm,weight_kg,age,waist,request_gender)
 	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
 
 
 
 
 
-def calculateAnthropoAge(request,height_cm,weight_kg,age,waist):
+def calculateAnthropoAge(request,height_cm,weight_kg,age,waist,request_gender):
 	bmiStatus = ""
 	bmiImage = '';
 	bmi =  round(weight_kg / ((height_cm / 100) ** 2), 1) if height_cm > 0  else None
@@ -48,8 +48,8 @@ def calculateAnthropoAge(request,height_cm,weight_kg,age,waist):
 	print(bmiStatus)	
 	bmi = weight_kg /((height_cm / 100) ** 2)
 	waist_ratio = waist / height_cm
-	idealBMI = 22
-	sex =waist
+	ideal_BMI = 22
+	ideal_Waiste_Ratio 
 	print(sex)
 	
 
