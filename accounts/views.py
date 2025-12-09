@@ -18,6 +18,7 @@ def safe_redirect(request,next_url,default ="dashboard:home"):
 		return redirect(next_url)
 	return redirect(reverse(default)); 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @never_cache
 def register(request,show_register = True):
     # check for whether user authentication,if authenticated it won't not go 
@@ -28,6 +29,9 @@ def register(request,show_register = True):
 =======
 def register(request,show_register = True):
 >>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
+=======
+def register(request,show_register = True):
+>>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
     user_exist = User.objects.filter(email = request.POST.get("email")).exists()
     if(request.method == "POST"):
 

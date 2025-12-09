@@ -9,6 +9,7 @@ from django.shortcuts import render
    
 @login_required(login_url = "accounts:login")
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 def home(request):
 	show_login_toast = request.session.pop("show_login_toast","")
@@ -57,10 +58,15 @@ def calculateAnthropoAge(request,height_cm,weight_kg,age,waist,request_gender):
 	return render(request,"dashboard/main.html",{"bmiStatus":bmiStatus})
 
 =======
+=======
+>>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
 def home(request):
 	show_login_toast = request.session.pop("show_login_toast","")
 	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
 
+<<<<<<< HEAD
 >>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
+=======
+>>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
 # Create your views here.
 
