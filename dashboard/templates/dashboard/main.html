@@ -466,6 +466,10 @@ showToast("{{show_toast}}");
 showToast("Enter the right values")
 // {% elif show_toast == "Already Logged in" %}
 // showToast("{{showToast}}")
+
+{%elif not_all_attributes_toast %}
+showToast("{{not_all_attributes_toast}}")
+
 {% endif %}
 // <?php endif?>
 // window.onpageshow = function(e) {

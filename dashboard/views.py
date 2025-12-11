@@ -11,6 +11,7 @@ from django.shortcuts import render
 
 def home(request):
 	show_login_toast = request.session.pop("show_login_toast","")
+	not_all_attributes_toast = ""
 	request_height = request.POST.get("height_cm")
 	request_weight =request.POST.get("weight_kg")
 	request_age = request.POST.get("age")
@@ -29,13 +30,12 @@ def home(request):
 	waist = int(request_waist) if request_waist not in (None,"","None") and str(request_waist).strip().isdigit() else None
 	gender = request_gender if request_gender not in(None,"","None")  else None
 		# waist = int(request.POST.get("waist")) if request.POST.get("waist") is not "" else None
-	
-	if all([height_sm, weight_kg, age, waist, gender]):
-		 anthroAge = calculateAnthropoAge(height_sm,weight_kg,age,waist,gender)
-		 bmi_status,bmi_image,bmi= calculateBMI(height_sm,weight_kg)	
-		 bmi_percent = getBMIPercent(bmi)
-		 print(bmi)
-		 return render(request,
+	if(request.method == "POST"):
+	  if all([height_sm, weight_kg, age, waist, gender]):
+	  	 anthroAge = calculateAnthropoAge(height_sm,weight_kg,age,waist,gender)
+	  	 bmi_status,bmi_image,bmi= calculateBMI(height_sm,weight_kg)	
+	  	 bmi_percent = getBMIPercent(bmi)
+	  	 return render(request,
 		 	"dashboard/main.html",
 		 	{
 		 	"anthroAge" : anthroAge,
@@ -48,8 +48,11 @@ def home(request):
 		 	"waist":waist,
 		 	"age" : age
 		 	})
- 
-	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
+	  else:
+	  	not_all_attributes_toast = "Choose/Enter required fields"
+	return render(request,"dashboard/main.html",
+		{"show_toast":show_login_toast,
+		"not_all_attributes_toast":not_all_attributes_toast})
 
 def calculateBMI(height_sm,weight_kg):
 	   bmiStatus = ""
