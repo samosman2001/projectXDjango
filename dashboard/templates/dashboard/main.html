@@ -145,16 +145,8 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
             <div class="cards modelCard">
                 
         <span>To estimate either AnthropoAge or S-AnthropoAge,please introduce the following data:</span>
-<<<<<<< HEAD
-<<<<<<< HEAD
     <form method="POST" action="{% url 'dashboard:home' %}">
         {% csrf_token %}
-=======
-    <form action="main.php" method="POST">
->>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
-=======
-    <form action="main.php" method="POST">
->>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
       <div class="textContainer">
         <div class="textfield">
         <label for="height_cm">Height</label>
@@ -215,15 +207,7 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
   	</label>
 	</div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 <button type="submit" >Submit</button>
-=======
-<button type="submit">Submit</button>
->>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
-=======
-<button type="submit">Submit</button>
->>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
         </form>
         <form>
     <div class="text">
@@ -290,7 +274,7 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
     </div>
     <div class="bottom-row">
         <div class="label">Height</div>
-        <div class="value"><?= $height ?? '' ?> cm</div>
+        <div class="value">{{height_sm}}  cm</div>
     </div>
 </div>
 <div class="bmiMetrics weight-metrics">
@@ -309,18 +293,24 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
     </div>
     <div class="bottom-row">
         <div class="label">Weight</div>
-        <div class="value"><?=$weight ?> kg</div>
+        <div class="value">{{weight_kg }}  kg</div>
     </div>
 </div>
 </div>
 <div class="rightColumn bmiCard">
 	<div class="bmiTitle">Body Mass Index (BMI)</div>
     <div class="statusAndResult">
-    <div class="bmiResult"><?= $bmi ?? '--' ?></div>
-<div class="bmiStatus"><?= $bmiStatus ?? '' ?></div>
+    <div class="bmiResult">
+    {% if bmi > 35 %}
+       Invalid Value
+       {% else %}
+       {{bmi}}
+     {% endif %}  
+  </div>
+<div class="bmiStatus" ><span style="font-size: 15px; font-weight: bold;color: gray;" >{{bmi_status}}</span></div>
 </div>
   <div class="bmiBar" style="position: relative;">
-  <div class="bmiDot" style="position: absolute; top: -6px; left: <?= getBMIPercent($bmi) ?>%; width: 12px; height: 12px; background-color: red; border-radius: 50%; border: 2px solid white;"></div>
+  <div class="bmiDot"style="position: absolute; top: -6px; left: {{ bmi_percent }}%; width: 12px; height: 12px; background-color:red; border-radius: 50%; border: 2px solid white;"></div>
 </div>
 
 	<div class="bmiLabels">
@@ -348,9 +338,9 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
 </div>
 <div class="metrics">
     <div class="metric">
-        <span>Chest (cm)</span>
+        <span>Age</span>
         <div class="result chestResult">
-            <span>44.5</span>
+            <span>{{age}}</span>
             <div class="upSticks">
               <div class="upStick arrowUpLeftStick"></div>
               <div class="upStick arrowUpRightStick"></div>
@@ -362,7 +352,7 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
     <div class="metric">
         <span>Waist (cm)</span>
         <div class="result waistResult">
-            <span>34</span>
+            <span>{{ waist }}</span>
             <div class="downSticks">
               <div class="downStick arrowDownLeftStick"></div>
               <div class="downStick arrowDownRightStick"></div>
@@ -388,7 +378,12 @@ $anthropoAge = calculateAnthropoAge($age, $sex, $height, $weight, $waist);
 
 
 <div class="illustration">
-     <img src="{% static 'icons/Male-Clothes.svg' %}" alt="bodyIllustration">
+    {% if bmi_image %}
+     <img src="{% static bmi_image %}" style = "height: 500px;width: 300px;"alt="bodyIllustration">
+
+     {% endif %}
+    
+    
 </div>
 
 </div>
@@ -465,17 +460,10 @@ function showToast(message) {
 {% if show_toast == "Successfully Logged In" %}
 
 showToast("{{show_toast}}");
-<<<<<<< HEAD
-<<<<<<< HEAD
 {% elif show_toast == "Already Logged In" %}
-=======
-{% elif show_toast == "Already Logged In"%}
->>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
-=======
-{% elif show_toast == "Already Logged In"%}
->>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
 showToast("{{show_toast}}");
-
+{%elif bmi > 35 %}
+showToast("Enter the right values")
 // {% elif show_toast == "Already Logged in" %}
 // showToast("{{showToast}}")
 {% endif %}

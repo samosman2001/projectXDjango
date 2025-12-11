@@ -8,18 +8,18 @@ from django.shortcuts import render
 
    
 @login_required(login_url = "accounts:login")
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 def home(request):
 	show_login_toast = request.session.pop("show_login_toast","")
 	request_height = request.POST.get("height_cm")
 	request_weight =request.POST.get("weight_kg")
 	request_age = request.POST.get("age")
-	request_waist = request.POST.getlist("gender",None)[0]
-    request_gender = request.POST.get("gender")
+	request_waist = request.POST.get("waist")
+	request_gender = request.POST.getlist("gender",[None])[0]
+	request_gender = request_gender if request is not [] else []
+	print(request_gender)
 
-	height_cm = int(request_height) if request_height not in (None, "", "None") and str(request_height).strip().isdigit() else None
+	height_sm = int(request_height) if request_height not in (None, "", "None") and str(request_height).strip().isdigit() else None
 	 
 	weight_kg = int(request_weight) if request_weight not in (None,"","None") and str(request_weight).strip().isdigit() else None
 
@@ -27,46 +27,70 @@ def home(request):
 	age = int(request_age) if request_age not in (None,"","None") and str(request_age).strip().isdigit() else None
 
 	waist = int(request_waist) if request_waist not in (None,"","None") and str(request_waist).strip().isdigit() else None
-	# waist = int(request.POST.get("waist")) if request.POST.get("waist") is not "" else None
-	if(height_cm  is not None and weight_kg  is not None and age is not None  and waist is not None):
-		calculateAnthropoAge(request,height_cm,weight_kg,age,waist,request_gender)
+	gender = request_gender if request_gender not in(None,"","None")  else None
+		# waist = int(request.POST.get("waist")) if request.POST.get("waist") is not "" else None
+	
+	if all([height_sm, weight_kg, age, waist, gender]):
+		 anthroAge = calculateAnthropoAge(height_sm,weight_kg,age,waist,gender)
+		 bmi_status,bmi_image,bmi= calculateBMI(height_sm,weight_kg)	
+		 bmi_percent = getBMIPercent(bmi)
+		 print(bmi)
+		 return render(request,
+		 	"dashboard/main.html",
+		 	{
+		 	"anthroAge" : anthroAge,
+		 	"bmi_status":bmi_status,
+		 	"bmi_image":bmi_image,
+		 	"height_sm": height_sm,
+		 	"weight_kg" : weight_kg,
+		 	"bmi":bmi,
+		 	"bmi_percent":bmi_percent ,
+		 	"waist":waist,
+		 	"age" : age
+		 	})
+ 
 	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
 
+def calculateBMI(height_sm,weight_kg):
+	   bmiStatus = ""
+	   bmiImage = '';
+	   bmi =  round(weight_kg / ((height_sm / 100) ** 2), 1) if height_sm > 0  else None
+	   if(bmi <18.5):
+	   	bmiStatus = "You are underweight"
+	   	bmiImage = "icons/Male-Clothes-thin.svg"
+	   elif bmi < 25:
+	   	bmiStatus = "You are healthy"
+	   	bmiImage = "icons/Male-Clothes.svg"
+	   else :
+	   	bmiStatus = "You are overweight"
+	   	bmiImage = "icons/Male-Clothes-overWeight2.png"
 
+	   print(bmiStatus)
+	   return [bmiStatus,bmiImage,bmi]
 
+def calculateAnthropoAge(height_sm,weight_kg,age,waist,gender):
+			
+	bmi = weight_kg /((height_sm / 100) ** 2)
+	waist_ratio = waist / height_sm
+	idealBMI = 22
+	idealWaistRatio = 0.45 if gender == "male" else 0.42
 
+	bmi_penalty = abs(bmi - idealBMI)
+	waist_penalty = max(0,waist_ratio - idealWaistRatio) * 100
+	penalty_score = (bmi_penalty * 0.8) + (waist_penalty *1.2)
+	anthroAge = age + penalty_score;
+	
+	return round(anthroAge, 1);
 
-def calculateAnthropoAge(request,height_cm,weight_kg,age,waist,request_gender):
-	bmiStatus = ""
-	bmiImage = '';
-	bmi =  round(weight_kg / ((height_cm / 100) ** 2), 1) if height_cm > 0  else None
-	if(bmi <18.5):
-		bmiStatus = "You are underweight"
-	elif bmi < 25:
-		bmiStatus = "You are healthy"
-	else:
-		bmiStatus = "You are overweight"
-
-	print(bmiStatus)	
-	bmi = weight_kg /((height_cm / 100) ** 2)
-	waist_ratio = waist / height_cm
-	ideal_BMI = 22
-	ideal_Waiste_Ratio 
-	print(sex)
 	
 
-	return render(request,"dashboard/main.html",{"bmiStatus":bmiStatus})
-
-=======
-=======
->>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
-def home(request):
-	show_login_toast = request.session.pop("show_login_toast","")
-	return render(request,"dashboard/main.html",{"show_toast":show_login_toast})
-
-<<<<<<< HEAD
->>>>>>> eecf2cc20349f98bc76b54e094f0ea5b0ec13b30
-=======
->>>>>>> 48eb9896b535ba849cc16a57eea9537b8995b067
 # Create your views here.
+def getBMIPercent(bmi):
+	min = 15
+	max = 35
+	if(bmi is 0 or bmi < min): 
+		return 0
+	if(bmi > max):
+		return 100
+	return round((bmi - min)/(max - min) * 100,1)
 
