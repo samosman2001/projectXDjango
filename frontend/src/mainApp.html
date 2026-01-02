@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Page</title>
+ <link rel="stylesheet" type="text/css" href="styles/mainApp.css">
+  <link rel="stylesheet" type="text/css" href="styles/login.css">
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="assets/icons/doublehelix.svg" alt="Logo" class="logo" />
+    <div class="logout"><img src="assets/icons/exitApp.svg"></div>
+  </header>
+
+  <main>
+    <!-- Content goes here -->
+  </main>
+
+ <nav class="bottom-nav">
+    <div class="item">
+      <a href="nutritionApp.html">
+      <div class="icon">🍎</div>
+      <div>Nutrition</div>
+    </a>
+    </div>
+    <div class="item">
+      <a href="exerciseApp.html">
+      <div class="icon">🏋️</div>
+      <div>Exercise</div>
+     </a>
+    </div>
+
+       <div class="home-button">
+ <a href="mainApp.html">
+    🏠
+  </a></div>
+
+    <div class="item">
+      <div class="icon">🗓️</div>
+      <div>Calendar</div>
+    </div>
+    <div class="item">
+      <div class="icon">📈</div>
+      <div>Progress</div>
+    </div>
+  </nav>
+<div class="toast fail"></div>
+<div class="toast success"></div>
+<script>
+  const exitButton = document.querySelector(".logout");
+  exitButton.addEventListener("click",async ()=>
+  {
+ const data = await api("http://127.0.0.1:8000/app/logout/");
+  console.log(data.success);
+  if (data.success) {
+
+  
+    // callToastMessage();
+    showToast(data.data);
+}    setTimeout(()=>
+    {
+      window.location.href = "appLogin.html";
+    },2000);
+
+  })
+function showToast(message) {
+  let toast;
+  if(message.toLowerCase().includes("successfully"))
+  toast = document.querySelector(".toast.success");
+  else
+  toast = document.querySelector(".toast.fail");
+  
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  // Hide after 3s
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+async function api (path,opts={})
+{
+  try{
+const res = await fetch( path,
+{credentials: "include",...opts});
+console.log(res);
+const text = await res.text(); // ← read raw output
+  console.log("RAW:", text);  
+  const data  =JSON.parse(text);
+
+  //return data inside the try scope if not then return null
+return data;
+}
+catch(err)
+{
+  console.log(err.message);
+}
+return null;
+}
+// async function callToastMessage()
+// {const data = await api('app-capacitor/api/getToastMessage.php', {
+//   credentials :'include' 
+
+// });
+// if(data.message)
+// showToast(data.message);
+// };
+
+
+
+window.addEventListener("pageshow", async () => {
+  const data = await api("http://127.0.0.1:8000/app/home/");
+  console.log(data.success);
+  if (data.success) {
+      
+      const justLoggedIn = sessionStorage.getItem("justLoggedIn")
+      console.log(justLoggedIn)
+    if(justLoggedIn)
+    {
+    
+    // callToastMessage();
+    showToast(data.message);
+    sessionStorage.removeItem("justLoggedIn");
+
+  }
+}
+
+else{
+console.log("No Permission. Redirecting...");
+showToast(data.error)
+      setTimeout(()=>
+    {
+      
+      window.location.href = "appLogin.html";
+
+    },1000);
+}
+
+
+
+});
+</script>
+</body>
+</html>
