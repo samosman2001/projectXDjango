@@ -293,13 +293,7 @@ showToast("{{show_toast}}");
 showToast("{{show_logout_toast}}");
 {% endif %}
 
-verify_email_otp = await fetch("http://127.0.0.1:8000/verify_otp/",{
-  method : "POST",
-  headers : {"Content-Type : application/json"},
-  credentials: "include",
-  body : JSON.stringify({email,otp})
-})
-verified_otp = verify_email_otp.json();
+
 
 // <?php endif?>
 // //each time you click on back button it should be refreshed

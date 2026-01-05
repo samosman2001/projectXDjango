@@ -3,9 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
+def exercise(request):
+	return render(request,"exercise/exercise.html",{})
 
-def csrf(request):
-    return JsonResponse({"detail": "CSRF cookie set"})
+
+# def csrf(request):
+#     return JsonResponse({"detail": "CSRF cookie set"})
 
 @csrf_exempt
 def log_exercise(request):
@@ -15,3 +18,4 @@ def log_exercise(request):
 		return JsonResponse({"success ": False,"error":"Invalid JSON"},status = 400)
 	if not user.is_authenticated:
 		return JsonResponse({"success": True,"error":"Unauthorized User"},status = 404)
+		
