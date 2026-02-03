@@ -158,7 +158,8 @@ function showToast(message) {
            workoutSeconds: 0,
            workoutTimer: null,
            workoutTime: "00:00:00",
-           activeExercise: null
+           activeExercise: null,
+           sumCalories : 0
         }
       },
       methods: {
@@ -479,6 +480,10 @@ function showToast(message) {
         addSet(exercise) {
           exercise.sets.push({ sets: 0, reps: 0, weight: 0, status: '' ,mode:this.mode});
         },
+        caloriesSum(calories){
+    this.sumCalories +=calories
+    console.log(this.sumCalories)
+  },
         calcCalories(ex) {
           fetch("http://127.0.0.1:8000/app/getAgeAndWeight",
             {credentials:"include"}).then(res=>res.json()).then(data=>{
@@ -487,9 +492,12 @@ function showToast(message) {
     const MET = ex.met; // temporary fixed value
 
     ex.calories = MET * weightKg * (ex.seconds / 3600);
+    this.caloriesSum(ex.calories)
+   
             })
    
   },
+
         //we are trying to filter out the sets which have at least 1 rep
         submitExercise()
         {
@@ -552,11 +560,14 @@ function showToast(message) {
 stopWorkout() {
   clearInterval(this.workoutTimer);
   this.workoutTimer = null;
+
 this.exercises.forEach(ex => {
     this.calcCalories(ex);
+    console.log(ex.calories)
   });
   console.log("Workout seconds:", this.workoutSeconds);
   console.log("Per exercise:", this.exercises);
+  console.log("Sum Calories ", this.sumCalories)
 },
 
 setActiveExercise(ex) {
