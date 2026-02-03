@@ -502,7 +502,7 @@ function showToast(message) {
           console.log(hasData);
           if(!hasData)
           {
-            alert("Fill it in at least one set");
+            showToast("Fill it in at least one set");
             return;
           }
           const payload = {
@@ -528,9 +528,9 @@ function showToast(message) {
            console.log(data);
       if (data.success === true) {
         
-        alert("Workout logged successfully!");
+        showToast("Workout logged successfully!");
       } else {
-        alert("Failed to log workout.");
+        showToast("Failed to log workout.");
           }})
         },
         startWorkout() {
