@@ -5,4 +5,8 @@ app_name = "exercise"
 urlpatterns=[
   path("exercise", views.exercise,name = "exercise"),
  path("app/log_exercise",app_views.log_exercise,name ="log_exercise"),
+ path("app/getWorkouts",views.get_workouts,name="get_workouts"),
+ path("app/getLastExercise",app_views.getLastExercise),
+ path("app/getAgeAndWeight",app_views.getAgeAndWeight)
+
 ]   

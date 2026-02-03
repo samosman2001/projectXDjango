@@ -18,6 +18,26 @@
 
   <main>
     <!-- Content goes here -->
+
+  <div class="metrics-card">
+  <h2 class="metrics-title">Your Info</h2>
+
+  <form id="metricsForm" class="metrics-form">
+    <div class="field">
+      <label for="age">Enter age</label>
+      <input type="number" id="age" name="age" placeholder="e.g. 23" min="1" max="120" >
+    </div>
+
+    <div class="field">
+      <label for="weight">Enter weight (kg)</label>
+      <input type="number" id="weight" name="weight" placeholder="e.g. 75" min="1" max="500" step="0.1" >
+    </div>
+
+    <button type="submit" class="btn-primary">Submit</button>
+  </form>
+
+  <p class="hint">Tip: weight can be decimals (75.5).</p>
+</div>
   </main>
 
  <nav class="bottom-nav">
@@ -51,6 +71,38 @@
 <div class="toast fail"></div>
 <div class="toast success"></div>
 <script>
+  
+document.getElementById("metricsForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const age = document.getElementById("age").value;
+  const weight = document.getElementById("weight").value;
+  if (age =="" || weight == "" )
+    {showToast("Enter Correct Data")
+  return;
+  }
+  fetch("http://127.0.0.1:8000/app/save-metrics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials:"include",
+    body: JSON.stringify({
+      age: age,
+      weight: weight
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showToast("Saved successfully!");
+    }
+    else 
+     showToast("Enter Correct Data")
+  });
+});
+
+
   const exitButton = document.querySelector(".logout");
   exitButton.addEventListener("click",async ()=>
   {

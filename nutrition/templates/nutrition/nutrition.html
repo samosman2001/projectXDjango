@@ -142,13 +142,14 @@ session_start();
     </div>
   </main>
   <script>
-    fetch("../app-capacitor/api/getFoodLogs.php")
+    fetch("http://127.0.0.1:8000/get-food-logs")
     .then(res=>res.json())
     .then(data=>
     {
     const btable = document.getElementById("nutritionBody");
     let totalCalories =0,totalProtein=0,totalCarbs=0,totalFat=0;
-    data.forEach(item=>
+    console.log(data.logs)
+    data.logs.forEach(item=>
     {
       const row = document.createElement("tr");
       row.innerHTML = `

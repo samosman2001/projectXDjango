@@ -21,9 +21,20 @@
     </div>
 
     <h2>{{currentDay}}</h2>
+<div id="stopwatchBox">
+  <div class="time">{{ workoutTime }}</div>
 
+  <div class="sw-buttons">
+    <button @click="startWorkout">Start</button>
+    <button @click="stopWorkout">Stop</button>
+  </div>
+
+  <div class="active-ex">
+    Active: {{ activeExercise ? activeExercise.name : "None" }}
+  </div>
+</div>
     <div class="exercise-box" v-for="exercise in exercises" :key="exercise.name">
-      <div class="exercise-title">Exercise: {{ exercise.name }}</div>
+      <div class="exercise-title" @click ="setActiveExercise(exercise)":class="{active: activeExercise === exercise}">Exercise: {{ exercise.name }}</div>
       <div class="set-row" style="font-weight: bold;">
         <div>Sets</div><div>Reps</div><div>Weight</div><div>Status</div>
       </div>
@@ -141,81 +152,344 @@ function showToast(message) {
           //   { name: 'Romanian Deadlift', sets: [{ sets: 3, reps: 8, weight: 0, status: '' }] },
           //   { name: 'Barbell squat', sets: [{ sets: 3, reps: 8, weight: 0, status: '' }] },
           // ]
-          currentDay:'',
-          exercises:[]
+           currentDay: '',
+           exercises: [],
+
+           workoutSeconds: 0,
+           workoutTimer: null,
+           workoutTime: "00:00:00",
+           activeExercise: null
         }
       },
       methods: {
         setSessionByDay()
-        {
+        {const legDay = ["Squats","Walking Lunges","Leg Extension","Lying Leg Curl","Leg Press","Hip Abduction","Lunges"]
+         const shoulderDay = ["Overhead Shoulder Press","Dumbbell Lateral Raise","Rear Delt Fly","Upright Row","Face Pull","Shoulder Shrug"]
+         const chest  = ["Barbell Bench Press","Incline Dumbbell Press","Dips","Pushups","Cable Crossover","Pec Deck Machine"]
+        const back = ["Lat Pull Down","High Row Machine","T Bar row","Seated Horizontal Row","One Arm Dumbell Row"]
           const day  = new Date().getDate();
-
-          //check for which day you can 
-          if(day % 2 == 0)
+         fetch ("http://127.0.0.1:8000/app/getLastExercise",{
+          credentials : "include"
+         }).then(res=>res.json()).then(data=>{
+          if(!data.workout)
           {
-            this.currentDay = "Chest/Shoulder Day"
-            if(this.mode=="home")
-            {
-            
-            this.exercises =[
+            this.currentDay = "Chest Day"
+            if(this.mode == "home"){
+              this.exercises =[
               {name:"Pushups",
-                sets:[{sets : 3,reps : 8,weight : 0,status : "",mode:this.mode}]},
-              {name:"Pullups",
-                sets:[{sets:3,reps:15,weight:0,status:"",mode:this.mode}]}
-            ]}
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Dips",
+               seconds: 0,
+               calories : 0,
+                met : 6,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
+            }
             else
             {
-        this.exercises =[
-              {name:"Deadlift",
-                sets:[{sets : 3,reps : 8,weight : 0,status : "",mode:this.mode}]},
-              {name:"Bench Press",
-                sets:[{sets:3,reps:15,weight:0,status:"",mode:this.mode}]}
-            ]}
+              this.exercises =[
+              {name:"Barbell Bench Press",
+
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Incline Dumbbell Press",
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Cable Crossover",
+                
+                seconds: 0,
+                calories : 0,
+                  met : 4.5,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Pec Deck Machine",
+                seconds: 0,
+                calories : 0,
+                met : 4.5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
             }
-         
-          else
+            return; 
+          } 
+          if(legDay.find(value =>value == data.workout.exercise))
           {
-            this.currentDay = "Leg Day";
-            if(this.mode=="home")
+            this.currentDay = "Chest Day"
+            if(this.mode == "home"){
+              this.exercises =[
+              {name:"Pushups",
+                
+                seconds: 0,
+               calories : 0,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Dips",
+              
+                seconds: 0,
+                calories : 0,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
+            }
+            else
             {
-              
-            this.exercises = 
-            [
-              {
-                name:"Squats",
-                sets:[{sets:3,reps:20,weight:0,status:"",mode:this.mode}]
-              },
-
-              {
-                  name:"Lunges",
-                  sets: [{sets:4,reps:10,weight:0,status:"",mode:this.mode}]
-              }
+              this.exercises =[
+              {name:"Barbell Bench Press",
+                
+                seconds: 0,
+                calories : 0,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Incline Dumbbell Press",
+               
+                seconds: 0,
+                calories : 0,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Cable Crossover",
+                 
+                seconds: 0,
+                calories : 0,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Pec Deck Machine",
+                
+                seconds: 0,
+                calories : 0,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
             ]
-        }
-
-          else
-          {
-              
-            this.exercises = 
-            [
-              {
-                name:"Leg Press",
-                sets:[{sets:3,reps:20,weight:0,status:"",mode:this.mode}]
-              },
-
-              {
-                  name:"Walking Lunges",
-                  sets: [{sets:4,reps:10,weight:0,status:"",mode:this.mode}]
-              }
-            ]
+            }
           }
+       else if (shoulderDay.find(value =>value == data.workout.exercise))
+       {this.currentDay = "Leg Day"
+        if(this.mode == "home"){
+              this.exercises =[
+              {name:"Squats",
+                
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+                {name:"Lunges",
+                 
+                seconds: 0,
+                calories : 0,
+                  met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]}
+
+            ]
+            }
+            else
+            {
+              this.exercises =[
+              {name:"Walking Lunges",
+                
+                seconds: 0,
+                calories : 0,
+                met : 7,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Leg Extensions",
+                
+                seconds: 0,
+                calories : 0,
+                met : 4,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Lying Leg Curl",
+                  
+                seconds: 0,
+                calories : 0,
+                  met : 4,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Leg Press",
+                
+                seconds: 0,
+                calories : 0,
+                met : 5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Hip Abduction",
+                  
+                seconds: 0,
+                calories : 0,
+                  met : 3.5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
+            }
+       }
+       else if (chest.find(value =>value == data.workout.exercise))
+       {
+        this.currentDay = "Back Day"
+        if(this.mode == "home"){
+              this.exercises =[
+              {name:"Pullups",
+                
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]}
+            ]
+            }
+            else
+            {
+              this.exercises =[
+              {name:"Lat Pull Down",
+                
+                seconds: 0,
+               calories : 0,
+                met: 5,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"High Row Machine",
+                
+                seconds: 0,
+                calories : 0,
+                met : 5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"T Bar row",
+                  
+                seconds: 0,
+                calories : 0,
+                  met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Seated Horizontal Row",
+                
+                seconds: 0,
+                calories : 0,
+                met :5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"One Arm Dumbell Row",
+                  
+                seconds: 0,
+                calories : 0,
+                  met : 6,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
+            }
+       }
+       else {
+        this.currentDay = "Shoulder Day"
+        if(this.mode == "home"){
+              this.exercises =[
+              {name:"Shoulder Shrug",
+                
+                seconds: 0,
+                calories : 0,
+                met : 4,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]}
+            ]
+            }
+            else
+            {
+              this.exercises =[
+              {name:"Overhead Shoulder Press",
+                
+                seconds: 0,
+                calories : 0,
+                met : 6,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Dumbbell Lateral Raise",
+               
+                seconds: 0,
+                calories : 0,
+                met : 4,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Rear Delt Fly",
+                  
+                seconds: 0,
+                calories : 0,
+                  met : 4,
+                sets:[{sets : 1,reps : 8,weight : 0,status : "",mode:this.mode}]},
+              {name:"Upright Row",
+                
+                seconds: 0,
+               calories : 0,
+                met : 5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]},
+                {name:"Face Pull",
+              
+                seconds: 0,
+                calories : 0,
+                  met : 4.5,
+                sets:[{sets:1,reps:15,weight:0,status:"",mode:this.mode}]}
+            ]
+            }
+       }
+         })
+        //   //check for which day you can 
+        //   if(day % 2 == 0)
+        //   {
+        //     this.currentDay = "Chest/Shoulder Day"
+        //     if(this.mode=="home")
+        //     {
+            
+        //     this.exercises =[
+        //       {name:"Pushups",
+        //         sets:[{sets : 3,reps : 8,weight : 0,status : "",mode:this.mode}]},
+        //       {name:"Pullups",
+        //         sets:[{sets:3,reps:15,weight:0,status:"",mode:this.mode}]}
+        //     ]}
+        //     else
+        //     {
+        // this.exercises =[
+        //       {name:"Deadlift",
+        //         sets:[{sets : 3,reps : 8,weight : 0,status : "",mode:this.mode}]},
+        //       {name:"Bench Press",
+        //         sets:[{sets:3,reps:15,weight:0,status:"",mode:this.mode}]}
+        //     ]}
+        //     }
+         
+        //   else
+        //   {
+        //     this.currentDay = "Leg Day";
+        //     if(this.mode=="home")
+        //     {
+              
+        //     this.exercises = 
+        //     [
+        //       {
+        //         name:"Squats",
+        //         sets:[{sets:3,reps:20,weight:0,status:"",mode:this.mode}]
+        //       },
+
+        //       {
+        //           name:"Lunges",
+        //           sets: [{sets:4,reps:10,weight:0,status:"",mode:this.mode}]
+        //       }
+        //     ]
+        // }
+
+        //   else
+        //   {
+              
+        //     this.exercises = 
+        //     [
+        //       {
+        //         name:"Leg Press",
+        //         sets:[{sets:3,reps:20,weight:0,status:"",mode:this.mode}]
+        //       },
+
+        //       {
+        //           name:"Walking Lunges",
+        //           sets: [{sets:1,reps:10,weight:0,status:"",mode:this.mode}]
+        //       }
+        //     ]
+        //   }
         
-          }
+        //   }
          
         },
         addSet(exercise) {
           exercise.sets.push({ sets: 0, reps: 0, weight: 0, status: '' ,mode:this.mode});
         },
+        calcCalories(ex) {
+          fetch("http://127.0.0.1:8000/app/getAgeAndWeight",
+            {credentials:"include"}).then(res=>res.json()).then(data=>{
+         console.log(data)
+            const weightKg = data.userMetrics.weight_kg; // later replace with user profile
+    const MET = ex.met; // temporary fixed value
+
+    ex.calories = MET * weightKg * (ex.seconds / 3600);
+            })
+   
+  },
         //we are trying to filter out the sets which have at least 1 rep
         submitExercise()
         {
@@ -231,7 +505,11 @@ function showToast(message) {
             alert("Fill it in at least one set");
             return;
           }
-         
+          const payload = {
+    mode: this.mode,
+    exercises: this.exercises
+  }; console.log(payload)
+
           console.log(JSON.stringify(this.exercises))
           fetch("http://127.0.0.1:8000/app/log_exercise",
           {
@@ -240,7 +518,8 @@ function showToast(message) {
             credentials:"include",
             
             //send flat array to avoid the issues with debug
-            body:JSON.stringify(this.exercises)
+
+           body: JSON.stringify(payload)
           })
           .then(res=>res.json())
           .then(data=>{
@@ -253,10 +532,62 @@ function showToast(message) {
       } else {
         alert("Failed to log workout.");
           }})
-        }
+        },
+        startWorkout() {
+  if (this.workoutTimer) return;
+
+  this.workoutTimer = setInterval(() => {
+
+    this.workoutSeconds++;
+
+    if (this.activeExercise) {
+      this.activeExercise.seconds++;
+    }
+
+    this.workoutTime = this.formatTime(this.workoutSeconds);
+
+  }, 1000);
+},
+
+stopWorkout() {
+  clearInterval(this.workoutTimer);
+  this.workoutTimer = null;
+this.exercises.forEach(ex => {
+    this.calcCalories(ex);
+  });
+  console.log("Workout seconds:", this.workoutSeconds);
+  console.log("Per exercise:", this.exercises);
+},
+
+setActiveExercise(ex) {
+  this.activeExercise = ex;
+},
+
+formatTime(sec) {
+  let hrs = Math.floor(sec / 3600);
+  let mins = Math.floor((sec % 3600) / 60);
+  let secs = sec % 60;
+
+  return (
+    String(hrs).padStart(2,"0") + ":" +
+    String(mins).padStart(2,"0") + ":" +
+    String(secs).padStart(2,"0")
+  );
+}
+
       },
       mounted()
       {
+        fetch("http://127.0.0.1:8000/app/getWorkouts", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) return;
+
+        
+
+        // default load = gym
+        // loadExercises("gym", this.workouts);
+      });
         this.setSessionByDay();
       },
       watch: {

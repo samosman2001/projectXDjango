@@ -175,40 +175,42 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 const {createApp} = Vue;
-createApp({
+const app = createApp({
 
 data()
 {
   return {
     top3 : [],
     counts : [],
-    streak: 0
+    streak: 0,
+    workouts:[],
+     exercises: []
 }
   ;
 },
 mounted(){
- fetch("../app-capacitor/api/getExercises.php")
-      .then(res=>res.json())
-      .then(data=>{
-       let now = new Date();
-       now = Math.floor(now.getTime() / 1000);
-       console.log("Current seconds : "+ now);
-         let max = 0;
-     data.forEach(item=>
-     {
-         
-    this.counts[item.name]=(this.counts[item.name] || 0) + 1;
-                
+fetch("http://127.0.0.1:8000/app/getWorkouts", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) return;
 
-     });
-     
+        this.workouts = data.workouts;
 
-         
-     const top3= Object.entries(this.counts).sort((a,b)=>b[1] - a[1]).slice(0,3).map(([name,value])=>({name,value}));
-      
-      this.top3 = top3;
-      
+        // build top 3
+        this.counts = {};
+        data.workouts.forEach(w => {
+          this.counts[w.name] = (this.counts[w.name] || 0) + 1;
         });
+
+        this.top3 = Object.entries(this.counts)
+          .sort((a,b) => b[1] - a[1])
+          .slice(0,3)
+          .map(([name,value]) => ({name,value}));
+
+        // default load = gym
+        loadExercises("gym", this.workouts);
+      });
+
 
       fetch("../backend/auth/getStreakLogs.php")
       .then(res => res.json())
@@ -227,10 +229,8 @@ mounted(){
 }).mount("#app");
 
 let workoutChart = null;
-    function loadExercises(selectedMode) {
-  fetch("../app-capacitor/api/getExercises.php")
-    .then(res => res.json())
-    .then(data => {
+    function loadExercises(selectedMode,data) {
+  
       
       const sessions = [0, 0, 0, 0, 0, 0, 0];
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -250,8 +250,7 @@ let workoutChart = null;
       sunday.setDate(monday.getDate() + 6);
       sunday.setHours(23, 59, 59, 999);
 
-      list.innerHTML = data
-        .filter(entry => entry.mode === selectedMode)
+      list.innerHTML = data.filter(entry => entry.mode === selectedMode)
         .filter(entry => {
           const [year, month, day] = entry.created_at.split("-");
           const date = new Date(year, month - 1, day, 12);
@@ -294,7 +293,7 @@ let workoutChart = null;
     scales: { y: { beginAtZero: true } }
   }
 });
-    });
+    
 }
     
     const ctx2 = document.getElementById('calorieChart').getContext('2d');
@@ -325,7 +324,7 @@ let workoutChart = null;
     document.querySelectorAll(".mode-switch button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     const selectedMode = btn.getAttribute("data-mode");
-    loadExercises(selectedMode);
+    loadExercises(selectedMode,app.workouts);
   });
 });
   </script>

@@ -450,20 +450,20 @@ const labels = rawMeals.map((meal) => {
           calories: +(foodFound.calories * factor).toFixed(1)
         });
      localStorage.setItem("meals",JSON.stringify(this.meals));
-     fetch("../api/logFood.php",
+     fetch("http://127.0.0.1:8000/app/logFood/",
      {
        method :"POST",
+       credentials : "include",
        headers:
        {
-        "Content-Type" : "application/json"
+        "Content-Type" : "application/json",
+
        },
        body: JSON.stringify(
        {
-        name:this.newFood,
-        protein:+(foodFound.protein*factor).toFixed(1),
-        carbs: +(foodFound.carbs * factor).toFixed(1),
-        fat: +(foodFound.fat * factor).toFixed(1),
-        calories: +(foodFound.calories * factor).toFixed(1)
+        food_id: foodFound.id,
+    grams: fgrams,
+    meal_type: this.mealType || "Lunch"
        })
 
      })
@@ -486,13 +486,16 @@ const labels = rawMeals.map((meal) => {
     { if(this.meals.length)
       this.updateChart();
   
-    fetch("../api/getFood.php").
-    then(res=>res.json())
+ fetch("http://127.0.0.1:8000/app/getFoods/", {
+  credentials: "include"
+}).then(res=>res.json())
     .then(data=>
     {
-      data.forEach(item =>
+      console.log(data)
+      data.foods.forEach(item =>
       {
       this.foodDatabase[item.name.toLowerCase()]={
+        id: item.id,
         calories:item.calories,
         protein:item.protein,
         fat: item.fat,
