@@ -210,7 +210,7 @@ fetch("http://127.0.0.1:8000/app/getWorkouts", { credentials: "include" })
         // default load = gym
         loadExercises("gym", this.workouts);
       });
-
+    fetch("http://127.0.0.1:8000/getCaloriesInAndOut",{credentials : "include"})
 
       fetch("../backend/auth/getStreakLogs.php")
       .then(res => res.json())

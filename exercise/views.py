@@ -3,9 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .models import WorkoutLog
+from nutrition.models import LogFood
+import json
 
 
 def exercise(request):
+
 	return render(request,"exercise/exercise.html",{})
 
 # exercise/views.py
@@ -39,8 +42,16 @@ def get_workouts(request):
 def log_exercise(request):
 	try:
 		data = json.loads(request.body.decode("utf-8") or {})
-	except json.JsonEncodeError:
+	except json.JSONDecodeError:
 		return JsonResponse({"success ": False,"error":"Invalid JSON"},status = 400)
 	if not user.is_authenticated:
 		return JsonResponse({"success": True,"error":"Unauthorized User"},status = 404)
-		
+
+def getCaloriesInAndOut(request):
+        workouts = WorkoutLog.objects.filter(user = request.user)
+        foods = LogFood.objects.filter(user=request.user)
+        return JsonResponse({"success ": True,"caloriesOut":[
+            {"calories":w.calories,"created_at":w.created_at}
+            for w in workouts],"caloriesIn":[{
+           "calories":food.calories,"created_at":food.created_at
+            } for food in foods]},status = 400)   

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django .contrib.auth.decorators import login_required
 from .models import Exercise,WorkoutLog,WorkoutPlan,WorkoutPlanExercise,WorkoutPlanSet
+from nutrition.models import LogFood
 from dashboard.models import UserMetrics
 @login_required
 def get_exercise(request):
@@ -102,4 +103,5 @@ def getAgeAndWeight(request):
 		"weight_kg" : ageAndWeight[0].get("weight"),
 		"created_at" : ageAndWeight[0].get("created_at")
 		}})
+
 

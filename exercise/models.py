@@ -84,6 +84,12 @@ class WorkoutPlanSet(models.Model):
     def __str__(self):
         return f"{self.sets}x{self.reps} ({self.weight}kg)"
 
+
+
+class Calories(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete = models.CASCADE)
+    calories_gained = models.FloatField(default= 0.0)
+    calories_burned = models.FloatField(default = 0.0)
 	
 
 

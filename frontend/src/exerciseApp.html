@@ -513,9 +513,14 @@ function showToast(message) {
             showToast("Fill it in at least one set");
             return;
           }
+          const currentDate  = new Date()
+
           const payload = {
+            sumCalories : this.sumCalories,
+            currentDay:currentDate,
     mode: this.mode,
-    exercises: this.exercises
+    exercises: this.exercises,
+
   }; console.log(payload)
 
           console.log(JSON.stringify(this.exercises))
