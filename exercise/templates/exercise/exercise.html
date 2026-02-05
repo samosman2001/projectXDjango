@@ -188,7 +188,10 @@ data()
 }
   ;
 },
-mounted(){
+async mounted(){
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+let caloriesIn = new Array(7).fill(0)
+let caloriesOut = new Array(7).fill(0)
 fetch("http://127.0.0.1:8000/app/getWorkouts", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
@@ -208,25 +211,63 @@ fetch("http://127.0.0.1:8000/app/getWorkouts", { credentials: "include" })
           .map(([name,value]) => ({name,value}));
 
         // default load = gym
-        loadExercises("gym", this.workouts);
+        loadExercises("", this.workouts);
       });
-    fetch("http://127.0.0.1:8000/getCaloriesInAndOut",{credentials : "include"})
+  const data =  await fetch("http://127.0.0.1:8000/getCaloriesInAndOut",{credentials : "include"}).then(res=>res.json());
+ data.caloriesIn.forEach(item=>
+ {
+  const idx = getWeekday(item.created_at)
+  caloriesIn[idx] +=Number(item.calories)
+ })
+data.caloriesOut.forEach(item=>{
+  const idx = getWeekday(item.created_at)
+  caloriesOut[idx] += Number(item.calories)
+})
+    
 
-      fetch("../backend/auth/getStreakLogs.php")
-      .then(res => res.json())
-      .then(data => {
-        this.streak = data.streak;
-        console.log(this.streak);
-        this.created_at = data.created_at;
+      // fetch("../backend/auth/getStreakLogs.php")
+      // .then(res => res.json())
+      // .then(data => {
+      //   this.streak = data.streak;
+      //   console.log(this.streak);
+      //   this.created_at = data.created_at;
 
-      })
-      .catch(err => {
-        console.error("Failed to fetch streak:", err);
-      });
-      
+      // })
+      // .catch(err => {
+      //   console.error("Failed to fetch streak:", err);
+      // });
+      const ctx2 = document.getElementById('calorieChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: 'Consumed',
+            data: caloriesIn,
+            backgroundColor: 'red',
+            borderRadius: 8
+          },
+          {
+            label: 'Burned',
+            data: caloriesOut,
+            backgroundColor: 'gold',
+            borderRadius: 8
+          }
+        ]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
 }
 
 }).mount("#app");
+function getWeekday(datastr)
+{
+  const date = new Date(datastr);
+  return (date.getDay()+ 6) % 7
+}
+
+
 
 let workoutChart = null;
     function loadExercises(selectedMode,data) {
@@ -296,28 +337,7 @@ let workoutChart = null;
     
 }
     
-    const ctx2 = document.getElementById('calorieChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-          {
-            label: 'Consumed',
-            data: [1500, 1600, 1300, 900, 1200, 1700, 1800],
-            backgroundColor: 'red',
-            borderRadius: 8
-          },
-          {
-            label: 'Burned',
-            data: [1200, 2000, 1500, 1000, 1300, 1600, 1900],
-            backgroundColor: 'gold',
-            borderRadius: 8
-          }
-        ]
-      },
-      options: { scales: { y: { beginAtZero: true } } }
-    });
+    
 
     document.querySelectorAll(".mode-switch button").forEach(btn => {
   btn.addEventListener("click", () => {

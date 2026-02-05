@@ -50,7 +50,7 @@ def log_exercise(request):
 def getCaloriesInAndOut(request):
         workouts = WorkoutLog.objects.filter(user = request.user)
         foods = LogFood.objects.filter(user=request.user)
-        return JsonResponse({"success ": True,"caloriesOut":[
+        return JsonResponse({"success": True,"caloriesOut":[
             {"calories":w.calories,"created_at":w.created_at}
             for w in workouts],"caloriesIn":[{
            "calories":food.calories,"created_at":food.created_at
