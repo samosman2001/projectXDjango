@@ -166,12 +166,18 @@
           <h3>Customer Map</h3>
           <p><strong>450 kcal left</strong><br/>Calorie Goal: 2,000 kcal</p>
           <canvas id="calorieChart"></canvas>
+
+        </div>
+        <div class="card full-width">
+          <canvas id ="exerciseDoughnut"style="width:100%;max-width:600px"></canvas>
+
         </div>
       </div>
     </div>
 
   </main>
 </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
 const {createApp} = Vue;
@@ -258,6 +264,37 @@ data.caloriesOut.forEach(item=>{
       },
       options: { scales: { y: { beginAtZero: true } } }
     });
+    const labels = Object.keys(this.counts)
+    const values = Object.values(this.counts)
+    const barColors = [
+          "#b91d47",
+          "#00aba9",
+          "#2b5797",
+          "#e8c3b9",
+          "#1e7145"
+                      ];
+ 
+    const ctx3 = document.getElementById("exerciseDoughnut");
+    new Chart(ctx3,{
+      type : "doughnut",
+      data :{
+      labels:labels,
+      datasets : [
+        {backgroundColor:barColors,
+        data : values}
+      ]
+      },
+     options:{
+      plugins:{
+        legend:{display:true},
+        title: {
+        display: true,
+        text: "Sets of Exercices",
+        font: {size:16}
+      }
+      }
+     }
+    })
 }
 
 }).mount("#app");
