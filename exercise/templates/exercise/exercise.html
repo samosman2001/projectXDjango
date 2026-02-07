@@ -9,6 +9,8 @@
 	<link rel="icon" type="image/png" href="{% static 'icons/dumbell.svg'%}">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
       <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+     
+
 </head>
 <style>
     * {
@@ -125,6 +127,7 @@
             </div>
 		</div>
      <main>
+      <div id="calendar"></div>
     <div class="mode-switch">
       <button  data-mode="gym">Gym</button>
       <button data-mode="home">Home</button>
@@ -271,7 +274,16 @@ data.caloriesOut.forEach(item=>{
           "#00aba9",
           "#2b5797",
           "#e8c3b9",
-          "#1e7145"
+          "#1e7145",
+          "#4D96FF",
+          "#FADADD",
+          "#FFF9C4",
+          "#E6E6FA",
+          "#F0F8FF",
+          "#FDF5E6",
+          "#E0F7FA",
+          "#FFFFFF",
+          "#CCCCCC"
                       ];
  
     const ctx3 = document.getElementById("exerciseDoughnut");
@@ -384,6 +396,7 @@ let workoutChart = null;
     loadExercises(selectedMode,app.workouts);
   });
 });
+    
   </script>
 </body>
 </html>
